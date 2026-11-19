@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>GTA V</title>
+<script src="coi-serviceworker.js"></script>
+<style>
+  html,body{margin:0;height:100%;background:#0b1409;color:#d2f0bc;
+    font:14px/1.5 system-ui,sans-serif;display:grid;place-items:center}
+  main{text-align:center;padding:24px;max-width:34rem}
+  a.btn{display:inline-block;margin-top:16px;padding:10px 22px;border-radius:6px;
+    background:#79b85b;color:#080b0e;font-weight:700;text-decoration:none}
+  code{color:#95a199}
+</style>
+</head>
+<body>
+<main>
+  <h1>Grand V</h1>
+  <p id="s">Checking browser…</p>
+  <a class="btn" id="go" href="#" hidden>Play</a>
+  <p><small>Needs Chrome or Edge, hardware acceleration on, and an imported mirror.</small></p>
+</main>
+<script>
+const TARGET = 'game.html?mode=sandbox&low=1&fps=30&res=1280x720&shadows=0';
+const s = document.getElementById('s'), go = document.getElementById('go');
+
+function report(msg, canPlay) {
+  s.textContent = msg;
+  go.hidden = !canPlay;
+  if (canPlay) go.href = TARGET;
+}
+
+function check() {
+  if (!crossOriginIsolated) return report('Isolation not active — hard-reload (Ctrl+Shift+R).', false);
+  if (!navigator.gpu) return report('No WebGPU. Turn on hardware acceleration.', false);
+  report('Ready.', true);
+}
+
+document.getElementById('go').addEventListener('click', e => {
+  e.preventDefault();
+  location.href = TARGET;
+});
+
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.addEventListener('controllerchange', check);
+}
+setTimeout(check, 1200);
+check();
+</script>
+</body>
+</html>
